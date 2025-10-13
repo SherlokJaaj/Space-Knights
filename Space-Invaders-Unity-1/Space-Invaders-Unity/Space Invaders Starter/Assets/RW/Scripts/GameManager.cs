@@ -35,6 +35,23 @@ namespace RayWenderlich.SpaceInvadersUnity
 {
     public class GameManager : MonoBehaviour
     {
+        internal static GameManager Instance;
 
+        [SerializeField]
+        private AudioSource sfx;
+
+        internal void PlaySfx(AudioClip clip) => sfx.PlayOneShot(clip);
+
+        private void Awake()
+        {
+            if (Instance == null)
+            {
+                Instance = this;
+            }
+            else if (Instance != this)
+            {
+                Destroy(gameObject);
+            }
+        }
     }
 }

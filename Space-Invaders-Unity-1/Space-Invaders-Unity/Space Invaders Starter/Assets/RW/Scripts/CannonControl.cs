@@ -33,6 +33,46 @@ namespace RayWenderlich.SpaceInvadersUnity
 {
     public class CannonControl : MonoBehaviour
     {
+        [SerializeField]
+        private float speed = 500f;
 
+        [SerializeField]
+        private Transform muzzle;
+
+        [SerializeField]
+        private AudioClip shooting;
+
+        [SerializeField]
+        private float coolDownTime = 0.5f;
+
+        [SerializeField]
+        private Bullet bulletPrefab;
+
+        private float shootTimer;
+
+
+
+        private void Update()
+        {
+            if (Input.GetKey(KeyCode.D))
+            {
+                transform.Translate(speed * Time.deltaTime, 0, 0);
+            }
+            else if (Input.GetKey(KeyCode.A))
+            {
+                transform.Translate(-speed * Time.deltaTime, 0, 0);
+            }
+
+            shootTimer += Time.deltaTime;
+            if (shootTimer > coolDownTime && Input.GetKey(KeyCode.Space))
+            {
+                shootTimer = 0f;
+
+                Instantiate(bulletPrefab, muzzle.position, Quaternion.identity);
+                GameManager.Instance.PlaySfx(shooting);
+            }
+        }
+         
+        
     }
 }
