@@ -45,6 +45,7 @@ namespace RayWenderlich.SpaceInvadersUnity
         private float currentX;
         private float xIncrement;
 
+        public GameObject bulletSpawnerPrefab;
         internal Transform GetInvader(int row, int column)
         {
             if (row < 0 || column < 0
@@ -110,10 +111,10 @@ namespace RayWenderlich.SpaceInvadersUnity
                 for (int i = 0; i < columnCount; i++)
                 {
                     var bulletSpawner = Instantiate(bulletSpawnerPrefab);
-                    bulletSpawner.transform.SetParent(swarm.transform);
-                    bulletSpawner.column = i;
-                    bulletSpawner.currentRow = rowCount - 1;
-                    bulletSpawner.Setup();
+                    //bulletSpawner.transform.SetParent(swarm.transform);
+                    //bulletSpawner.column = i;
+                    //bulletSpawner.currentRow = rowCount - 1;
+                    //bulletSpawner.Setup();
                 }
             }
         }
