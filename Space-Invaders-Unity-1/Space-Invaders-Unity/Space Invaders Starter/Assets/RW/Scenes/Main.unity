@@ -166,12 +166,31 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a6f248e121abf794593a05b8339f1440, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  invaderTypes: []
+  invaderTypes:
+  - name: SQUID
+    sprites:
+    - {fileID: -4820489913591291707, guid: 7896a03904803ea439aae4f6b57292e8, type: 3}
+    - {fileID: 4221454301551859240, guid: 7896a03904803ea439aae4f6b57292e8, type: 3}
+    - {fileID: 2303389498609602261, guid: 7896a03904803ea439aae4f6b57292e8, type: 3}
+    - {fileID: -2519970854153834894, guid: 7896a03904803ea439aae4f6b57292e8, type: 3}
+    points: 30
+    rowCount: 1
+  - name: CRAB
+    sprites:
+    - {fileID: 2506340831605303893, guid: 7896a03904803ea439aae4f6b57292e8, type: 3}
+    - {fileID: -6602700646630442733, guid: 7896a03904803ea439aae4f6b57292e8, type: 3}
+    points: 20
+    rowCount: 1
+  - name: OCTOPUS
+    sprites:
+    - {fileID: 802526666195090811, guid: 7896a03904803ea439aae4f6b57292e8, type: 3}
+    - {fileID: -5813114471755501378, guid: 7896a03904803ea439aae4f6b57292e8, type: 3}
+    points: 10
+    rowCount: 2
   columnCount: 11
-  ySpacing: 0
-  xSpacing: 0
-  spawnStartPoint: {fileID: 3125612637707621924, guid: 659e9d448bdc4ab4690d065b224ae316,
-    type: 3}
+  ySpacing: 25
+  xSpacing: 25
+  spawnStartPoint: {fileID: 294175664}
   speedFactor: 10
   bulletSpawnerPrefab: {fileID: 0}
 --- !u!114 &16625293

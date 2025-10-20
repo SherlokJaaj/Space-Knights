@@ -32,13 +32,11 @@ namespace RayWenderlich.SpaceInvadersUnity
         private Transform spawnStartPoint;
 
         private float minX;
+
         [Space]
         [Header("Movement")]
         [SerializeField]
         private float speedFactor = 10f;
-
-        [SerializeField]
-        private BulletSpawner bulletSpawnerPrefab;
 
         private Transform[,] invaders;
         private int rowCount;
@@ -164,6 +162,7 @@ namespace RayWenderlich.SpaceInvadersUnity
         {
             isMovingRight = !isMovingRight;
             MoveInvaders(0, -ySpacing);
+
         }
 
     }
