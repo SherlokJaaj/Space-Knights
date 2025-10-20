@@ -27,7 +27,6 @@ namespace RayWenderlich.SpaceInvadersUnity
         private float currentTime;
         private Transform followTarget;
 
-        
         internal void Setup()
         {
             currentTime = Random.Range(minTime, maxTime);
@@ -50,5 +49,28 @@ namespace RayWenderlich.SpaceInvadersUnity
             currentTime = Random.Range(minTime, maxTime);
         }
 
+        private void OnCollisionEnter2D(Collision2D other)
+        {
+            if (!other.collider.GetComponent<Bullet>())
+            {
+                return;
+            }
+
+            GameManager.Instance.
+                UpdateScore(InvaderSwarm.Instance.GetPoints(followTarget.gameObject.name));
+
+            InvaderSwarm.Instance.IncreaseDeathCount();
+
+            followTarget.GetComponentInChildren<SpriteRenderer>().enabled = false;
+            currentRow = currentRow - 1;
+            if (currentRow < 0)
+            {
+                gameObject.SetActive(false);
+            }
+            else
+            {
+                Setup();
+            }
+        }
     }
 }

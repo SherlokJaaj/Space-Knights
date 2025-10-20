@@ -53,8 +53,10 @@ namespace RayWenderlich.SpaceInvadersUnity
                  spriteRenderer.transform.InverseTransformPoint(other.transform.position));
 
             //Uncomment the following after adding the 'Bullet' code:
-            // if (other.GetComponent<Bullet>() && damage)
-            //     other.GetComponent<Bullet>().DestroySelf();
+            if (other.GetComponent<Bullet>() && damage)
+             other.GetComponent<Bullet>().DestroySelf();
+
+            GameManager.Instance.CreateExplosion(transform.position);
         }
     }
 }

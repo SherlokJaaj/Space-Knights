@@ -192,7 +192,10 @@ MonoBehaviour:
   xSpacing: 25
   spawnStartPoint: {fileID: 294175664}
   speedFactor: 10
-  bulletSpawnerPrefab: {fileID: 0}
+  bulletSpawnerPrefab: {fileID: 6663010631795688966, guid: c862e47b042287d4ba9c8463da749eb2,
+    type: 3}
+  musicControl: {fileID: 830995718}
+  cannonPosition: {fileID: 1472441959}
 --- !u!114 &16625293
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -224,6 +227,17 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   sfx: {fileID: 16625295}
+  explosionPrefab: {fileID: 4586659686193129463, guid: 7f304fd316b6a2648b167f9246e5d0b6,
+    type: 3}
+  explosionTime: 1
+  explosionClip: {fileID: 8300000, guid: 32cfea82824f13045877b24d7d50326a, type: 3}
+  maxLives: 3
+  livesLabel: {fileID: 1072051831}
+  music: {fileID: 830995718}
+  scoreLabel: {fileID: 1030000417}
+  gameOver: {fileID: 500558181}
+  allClear: {fileID: 304893960}
+  restartButton: {fileID: 400145464}
 --- !u!82 &16625295
 AudioSource:
   m_ObjectHideFlags: 0
@@ -1281,6 +1295,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 12b7b778a7c407c40a84c6bb2947a133, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  source: {fileID: 830995716}
+  pitchChangeSteps: 5
+  maxPitch: 5.25
 --- !u!1 &1030000415
 GameObject:
   m_ObjectHideFlags: 0
@@ -1627,10 +1644,14 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   speed: 500
-  muzzle: {fileID: 0}
-  shooting: {fileID: 0}
+  muzzle: {fileID: 2109200600}
+  shooting: {fileID: 8300000, guid: 593f7433e1f1bda409acf300bff89611, type: 3}
   coolDownTime: 0.5
-  bulletPrefab: {fileID: 0}
+  bulletPrefab: {fileID: -2660408224735016589, guid: f7fa5c1eae2e03a48baa9de60893b07c,
+    type: 3}
+  respawnTime: 2
+  sprite: {fileID: 666176963}
+  cannonCollider: {fileID: 1472441961}
 --- !u!61 &1472441961
 BoxCollider2D:
   m_ObjectHideFlags: 0

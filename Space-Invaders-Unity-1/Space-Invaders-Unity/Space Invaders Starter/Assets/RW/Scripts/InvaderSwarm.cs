@@ -12,6 +12,7 @@ namespace RayWenderlich.SpaceInvadersUnity
             public Sprite[] sprites;
             public int points;
             public int rowCount;
+
         }
         internal static InvaderSwarm Instance;
 
@@ -45,7 +46,51 @@ namespace RayWenderlich.SpaceInvadersUnity
         private float currentX;
         private float xIncrement;
 
-        public GameObject bulletSpawnerPrefab;
+        [SerializeField]
+        private BulletSpawner bulletSpawnerPrefab;
+
+        private int killCount;
+        private System.Collections.Generic.Dictionary<string, int> pointsMap;
+
+        [SerializeField]
+        private MusicControl musicControl;
+
+        private int tempKillCount;
+
+        [SerializeField]
+        private Transform cannonPosition;
+
+        private float minY;
+        private float currentY;
+
+        internal void IncreaseDeathCount()
+        {
+            killCount++;
+            if (killCount >= invaders.Length)
+            {
+                GameManager.Instance.TriggerGameOver(false);
+                return;
+            }
+
+            tempKillCount++;
+            if (tempKillCount < invaders.Length / musicControl.pitchChangeSteps)
+            {
+                return;
+            }
+
+            musicControl.IncreasePitch();
+            tempKillCount = 0;
+        }
+
+        internal int GetPoints(string alienName)
+        {
+            if (pointsMap.ContainsKey(alienName))
+            {
+                return pointsMap[alienName];
+            }
+            return 0;
+        }
+
         internal Transform GetInvader(int row, int column)
         {
             if (row < 0 || column < 0
@@ -71,6 +116,9 @@ namespace RayWenderlich.SpaceInvadersUnity
 
         private void Start()
         {
+
+            currentY = spawnStartPoint.position.y;
+            minY = cannonPosition.position.y;
             minX = spawnStartPoint.position.x;
 
             GameObject swarm = new GameObject { name = "Swarm" };
@@ -84,10 +132,16 @@ namespace RayWenderlich.SpaceInvadersUnity
             currentX = minX;
             invaders = new Transform[rowCount, columnCount];
 
+            pointsMap = new System.Collections.Generic.Dictionary<string, int>();
+
+
             int rowIndex = 0;
+
             foreach (var invaderType in invaderTypes)
             {
+
                 var invaderName = invaderType.name.Trim();
+                pointsMap[invaderName] = invaderType.points;
                 for (int i = 0, len = invaderType.rowCount; i < len; i++)
                 {
                     for (int j = 0; j < columnCount; j++)
@@ -108,20 +162,22 @@ namespace RayWenderlich.SpaceInvadersUnity
 
                     rowIndex++;
                 }
-                for (int i = 0; i < columnCount; i++)
-                {
-                    var bulletSpawner = Instantiate(bulletSpawnerPrefab);
-                    //bulletSpawner.transform.SetParent(swarm.transform);
-                    //bulletSpawner.column = i;
-                    //bulletSpawner.currentRow = rowCount - 1;
-                    //bulletSpawner.Setup();
-                }
+              
+            }
+
+            for (int i = 0; i < columnCount; i++)
+            {
+                var bulletSpawner = Instantiate(bulletSpawnerPrefab);
+                bulletSpawner.transform.SetParent(swarm.transform);
+                bulletSpawner.column = i;
+                bulletSpawner.currentRow = rowCount - 1;
+                bulletSpawner.Setup();
             }
         }
 
         private void Update()
         {
-            xIncrement = speedFactor * Time.deltaTime;
+            xIncrement = speedFactor * musicControl.Tempo * Time.deltaTime;
             if (isMovingRight)
             {
                 currentX += xIncrement;
@@ -163,6 +219,12 @@ namespace RayWenderlich.SpaceInvadersUnity
         {
             isMovingRight = !isMovingRight;
             MoveInvaders(0, -ySpacing);
+
+            currentY -= ySpacing;
+            if (currentY < minY)
+            {
+                GameManager.Instance.TriggerGameOver();
+            }
 
         }
 
