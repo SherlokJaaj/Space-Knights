@@ -1,138 +1,45 @@
-﻿/*
- * Copyright (c) 2021 Razeware LLC
- * 
- * Permission is hereby granted, free of charge, to any person obtaining a copy
- * of this software and associated documentation files (the "Software"), to deal
- * in the Software without restriction, including without limitation the rights
- * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
- * copies of the Software, and to permit persons to whom the Software is
- * furnished to do so, subject to the following conditions:
- * 
- * The above copyright notice and this permission notice shall be included in
- * all copies or substantial portions of the Software.
- *
- * Notwithstanding the foregoing, you may not use, copy, modify, merge, publish, 
- * distribute, sublicense, create a derivative work, and/or sell copies of the 
- * Software in any work that is designed, intended, or marketed for pedagogical or 
- * instructional purposes related to programming, coding, application development, 
- * or information technology.  Permission for such use, copying, modification,
- * merger, publication, distribution, sublicensing, creation of derivative works, 
- * or sale is expressly withheld.
- *    
- * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
- * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
- * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
- * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
- * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
- * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
- * THE SOFTWARE.
- */
-using UnityEngine;
+﻿using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
-namespace RayWenderlich.SpaceInvadersUnity
+public class GameManager : MonoBehaviour
 {
-    public class GameManager : MonoBehaviour
+    public static GameManager Instance;
+
+    public AudioSource sfx;
+    public GameObject explosionPrefab;
+    public float explosionTime = 1f;
+    public AudioClip explosionClip;
+
+    public int maxLives = 3;
+    public Text livesLabel;
+
+    public MusicControl music;
+
+    public Text scoreLabel;
+    public GameObject gameOver;
+    public GameObject allClear;
+    public Button restartButton;
+
+    private int lives;
+    private int score;
+
+    void Awake()
     {
-        internal static GameManager Instance;
+        if (Instance == null) Instance = this;
+        else if (Instance != this) Destroy(gameObject);
 
-        [SerializeField] 
-        private AudioSource sfx;
+        lives = maxLives;
+        if (livesLabel != null) livesLabel.text = $"Lives: {lives}";
 
-        [SerializeField] 
-        private GameObject explosionPrefab;
+        score = 0;
+        if (scoreLabel != null) scoreLabel.text = $"Score: {score}";
 
-        [SerializeField] 
-        private float explosionTime = 1f;
+        if (gameOver != null) gameOver.SetActive(false);
+        if (allClear != null) allClear.SetActive(false);
 
-        [SerializeField] 
-        private AudioClip explosionClip;
-
-        [SerializeField] 
-        private int maxLives = 3;
-
-        [SerializeField] 
-        private Text livesLabel;
-
-        private int lives;
-        
-        [SerializeField] 
-        private MusicControl music;
-
-        [SerializeField] 
-        private Text scoreLabel;
-
-        [SerializeField] 
-        private GameObject gameOver;
-        
-        [SerializeField]
-        private GameObject allClear;
-
-        [SerializeField] 
-        private Button restartButton;
-        
-        private int score;
-
-        internal void UpdateScore(int value)
+        if (restartButton != null)
         {
-            score += value;
-            scoreLabel.text = $"Score: {score}";
-        }
-
-        internal void TriggerGameOver(bool failure = true)
-        {
-            gameOver.SetActive(failure);
-            allClear.SetActive(!failure);
-            restartButton.gameObject.SetActive(true);
-
-            Time.timeScale = 0f;
-            music.StopPlaying();
-        }
-
-        internal void UpdateLives()
-        {
-            lives = Mathf.Clamp(lives - 1, 0, maxLives);
-            livesLabel.text = $"Lives: {lives}";
-
-            if (lives > 0) 
-            {
-                return;
-            }
-
-            TriggerGameOver();
-        }
-
-        internal void CreateExplosion(Vector2 position)
-        {
-            PlaySfx(explosionClip);
-
-            var explosion = Instantiate(explosionPrefab, position,
-                Quaternion.Euler(0f, 0f, Random.Range(-180f, 180f)));
-            Destroy(explosion, explosionTime);
-        }
-
-        internal void PlaySfx(AudioClip clip) => sfx.PlayOneShot(clip);
-
-        private void Awake()
-        {
-            if (Instance == null) 
-            {
-                Instance = this;
-            }
-            else if (Instance != this) 
-            {
-                Destroy(gameObject);
-            }
-
-            lives = maxLives;
-            livesLabel.text = $"Lives: {lives}";
-
-            score = 0;
-            scoreLabel.text = $"Score: {score}";
-            gameOver.gameObject.SetActive(false);
-            allClear.gameObject.SetActive(false);
-
             restartButton.onClick.AddListener(() =>
             {
                 SceneManager.LoadScene(SceneManager.GetActiveScene().name);
@@ -140,5 +47,44 @@ namespace RayWenderlich.SpaceInvadersUnity
             });
             restartButton.gameObject.SetActive(false);
         }
+    }
+
+    public void UpdateScore(int value)
+    {
+        score += value;
+        if (scoreLabel != null) scoreLabel.text = $"Score: {score}";
+    }
+
+    public void TriggerGameOver(bool failure = true)
+    {
+        if (gameOver != null) gameOver.SetActive(failure);
+        if (allClear != null) allClear.SetActive(!failure);
+        if (restartButton != null) restartButton.gameObject.SetActive(true);
+
+        Time.timeScale = 0f;
+        if (music != null) music.StopPlaying();
+    }
+
+    public void UpdateLives()
+    {
+        lives = Mathf.Clamp(lives - 1, 0, maxLives);
+        if (livesLabel != null) livesLabel.text = $"Lives: {lives}";
+
+        if (lives <= 0) TriggerGameOver();
+    }
+
+    public void CreateExplosion(Vector2 position)
+    {
+        if (explosionClip != null) PlaySfx(explosionClip);
+        if (explosionPrefab != null)
+        {
+            var explosion = Instantiate(explosionPrefab, position, Quaternion.Euler(0f, 0f, Random.Range(-180f, 180f)));
+            Destroy(explosion, explosionTime);
+        }
+    }
+
+    public void PlaySfx(AudioClip clip)
+    {
+        if (sfx != null && clip != null) sfx.PlayOneShot(clip);
     }
 }
