@@ -236,4 +236,9 @@ private void StartNextWave()
             Destroy(child.gameObject);
         }
     }
+
+    public int GetWavesCompleted()
+ {
+    return waveNumber - 1; // car waveNumber est incrémenté avant la prochaine vague
+ }
 }

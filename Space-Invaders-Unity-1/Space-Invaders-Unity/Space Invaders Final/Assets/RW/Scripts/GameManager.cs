@@ -13,16 +13,27 @@ public class GameManager : MonoBehaviour
 
     public int maxLives = 3;
     public Text livesLabel;
+    public Text scoreLabel;
+
+    public Text highScoreLabel;
+    public Text finalStatsLabel;
+    private int highScore = 0;
+
+    public GameObject gameOver;
+
+    [Header("Boutons")]
+    public Button restartButton;      // Bouton principal du GameOver
+    public Button pauseRestartButton; // Bouton "Recommencer" du menu pause
+    public Button resumeButton;       // Bouton "Reprendre"
 
     public MusicControl music;
 
-    public Text scoreLabel;
-    public GameObject gameOver;
-    public GameObject allClear;
-    public Button restartButton;
-
     private int lives;
     private int score;
+
+    [Header("Menu Pause")]
+    public GameObject pauseMenu;       
+    private bool isPaused = false;
 
     void Awake()
     {
@@ -36,18 +47,73 @@ public class GameManager : MonoBehaviour
         if (scoreLabel != null) scoreLabel.text = $"Score: {score}";
 
         if (gameOver != null) gameOver.SetActive(false);
-        if (allClear != null) allClear.SetActive(false);
 
+        // ----- Assignation des boutons -----
         if (restartButton != null)
         {
-            restartButton.onClick.AddListener(() =>
-            {
-                SceneManager.LoadScene(SceneManager.GetActiveScene().name);
-                Time.timeScale = 1f;
-            });
+            restartButton.onClick.AddListener(RestartGame);
             restartButton.gameObject.SetActive(false);
         }
+
+        if (pauseRestartButton != null)
+            pauseRestartButton.onClick.AddListener(RestartGame);
+
+        if (resumeButton != null)
+            resumeButton.onClick.AddListener(ResumeGame);
+
+        // ---- HIGH SCORE ----
+        highScore = PlayerPrefs.GetInt("HighScore", 0);
+        if (highScoreLabel != null)
+            highScoreLabel.text = $"High Score: {highScore}";
+
+        if (finalStatsLabel != null)
+            finalStatsLabel.gameObject.SetActive(false);
+
+        if (pauseMenu != null)
+            pauseMenu.SetActive(false);
     }
+
+    void Update()
+    {
+        // Appuyer sur P pour mettre en pause / reprendre
+        if (Input.GetKeyDown(KeyCode.P))
+        {
+            if (isPaused)
+                ResumeGame();
+            else
+                PauseGame();
+        }
+    }
+
+    // ====================
+    //   FONCTIONS PAUSE
+    // ====================
+
+    public void PauseGame()
+    {
+        Time.timeScale = 0f;
+        isPaused = true;
+        if (pauseMenu != null)
+            pauseMenu.SetActive(true);
+    }
+
+    public void ResumeGame()
+    {
+        Time.timeScale = 1f;
+        isPaused = false;
+        if (pauseMenu != null)
+            pauseMenu.SetActive(false);
+    }
+
+    public void RestartGame()
+    {
+        Time.timeScale = 1f;
+        SceneManager.LoadScene(SceneManager.GetActiveScene().name);
+    }
+
+    // ====================
+    //   AUTRES FONCTIONS
+    // ====================
 
     public void UpdateScore(int value)
     {
@@ -57,8 +123,23 @@ public class GameManager : MonoBehaviour
 
     public void TriggerGameOver(bool failure = true)
     {
+        if (score > highScore)
+        {
+            highScore = score;
+            PlayerPrefs.SetInt("HighScore", highScore);
+            PlayerPrefs.Save();
+            if (highScoreLabel != null)
+                highScoreLabel.text = $"High Score: {highScore}";
+        }
+
+        if (finalStatsLabel != null)
+        {
+            int wavesCompleted = InvaderSwarm.Instance != null ? InvaderSwarm.Instance.GetWavesCompleted() : 0;
+            finalStatsLabel.text = $"Score: {score}\nVagues battues: {wavesCompleted}\nHigh Score: {highScore}";
+            finalStatsLabel.gameObject.SetActive(true);
+        }
+
         if (gameOver != null) gameOver.SetActive(failure);
-        if (allClear != null) allClear.SetActive(!failure);
         if (restartButton != null) restartButton.gameObject.SetActive(true);
 
         Time.timeScale = 0f;
